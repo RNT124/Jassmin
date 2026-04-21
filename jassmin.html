@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jassmin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FAF7F2; --warm:#EDE6DB; --dark:#18120E; --brown:#3D2B1F;
+  --accent:#C0442C; --accent2:#E8A87C; --muted:#8A7A6E;
+  --success:#3D7A52; --blue:#2E5F82; --gold:#B8922A; --pink:#C45070;
+  --purple:#6A3DAD; --emp:#7A4F1A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;}
+
+/* NAV */
+.nav{background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:12px 18px;position:sticky;top:0;z-index:100;}
+.nav-brand{font-family:'Cormorant Garamond',serif;color:var(--accent2);font-size:1.5rem;letter-spacing:3px;line-height:1;}
+.nav-brand span{font-style:italic;color:rgba(255,255,255,0.4);font-size:0.58rem;letter-spacing:4px;display:block;margin-top:2px;}
+.nav-tabs{display:flex;gap:4px;background:rgba(255,255,255,0.07);border-radius:10px;padding:4px;}
+.nav-tab{background:none;border:none;color:rgba(255,255,255,0.45);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;padding:7px 12px;border-radius:7px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.nav-tab.active{background:var(--accent);color:#fff;}
+
+/* PAGES */
+.page{display:none;padding:20px;max-width:540px;margin:0 auto;}
+.page.active{display:block;}
+
+/* TITLES */
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--brown);margin-bottom:4px;}
+.section-sub{font-size:0.82rem;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+
+/* CARD */
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 14px rgba(0,0,0,0.06);border:1px solid var(--warm);}
+.card-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+/* FORM */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:0.8rem;font-weight:600;color:var(--brown);margin-bottom:5px;}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 13px;border:1.5px solid var(--warm);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;background:var(--cream);color:var(--dark);transition:border-color .2s;outline:none;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);background:#fff;}
+.form-textarea{resize:vertical;min-height:68px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* PRENDA ITEM */
+.prenda-item{background:var(--cream);border:1.5px solid var(--warm);border-radius:12px;padding:14px;margin-bottom:10px;position:relative;}
+.prenda-num{font-size:0.7rem;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:10px;}
+.prenda-remove{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;border-radius:6px;}
+.prenda-remove:hover{background:#fee;color:var(--accent);}
+.add-prenda-btn{width:100%;padding:11px;border:1.5px dashed var(--accent2);border-radius:10px;background:none;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;color:var(--accent);cursor:pointer;transition:all .2s;}
+.add-prenda-btn:hover{background:rgba(200,68,44,0.05);}
+
+/* ENVIO BOX */
+.envio-box{background:var(--cream);border:1.5px solid var(--accent2);border-radius:12px;padding:14px;margin-top:6px;}
+.envio-title{font-size:0.75rem;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:0.5px;}
+
+/* UPLOAD */
+.upload-area{border:2px dashed var(--warm);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream);}
+.upload-area:hover,.upload-area.dragover{border-color:var(--accent);background:rgba(200,68,44,0.04);}
+.upload-area input{display:none;}
+.upload-icon{font-size:1.8rem;margin-bottom:6px;}
+.upload-text{font-size:0.8rem;color:var(--muted);}
+.upload-preview{max-width:100%;border-radius:8px;margin-top:10px;display:none;}
+
+/* MONTO */
+.monto-info{background:#FFF8E6;border:1px solid #F0D080;border-radius:10px;padding:12px;margin-bottom:14px;font-size:0.8rem;color:#7A5A00;line-height:1.6;}
+.monto-total{font-size:1rem;font-weight:700;color:var(--brown);}
+
+/* BUTTONS */
+.btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:active{opacity:.85;transform:scale(.98);}
+.btn-secondary{background:var(--warm);color:var(--brown);}
+.btn-sm{display:inline-block;width:auto;padding:6px 13px;font-size:0.76rem;border-radius:8px;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-danger{background:#B83030;color:#fff;}
+.btn-purple{background:var(--purple);color:#fff;}
+.btn-emp{background:var(--emp);color:#fff;}
+.btn-excel{background:#1D6F42;color:#fff;}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:0.7rem;font-weight:700;}
+.badge-pending{background:#FFF3CD;color:#856404;}
+.badge-packed{background:#FFE8CC;color:#7A4F1A;}
+.badge-transit{background:#CCE5FF;color:#0050A0;}
+.badge-delivered{background:#D4EDDA;color:#155724;}
+.badge-moto{background:#F0E6FF;color:#6A0DAD;}
+.badge-shalom{background:#E6F0FF;color:#1A4A8A;}
+.badge-validated{background:#D4EDDA;color:#155724;}
+.badge-pending-pay{background:#FFF3CD;color:#856404;}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat-card{background:#fff;border-radius:14px;padding:14px;border:1px solid var(--warm);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--accent);line-height:1;}
+.stat-label{font-size:0.7rem;color:var(--muted);margin-top:3px;}
+
+/* ORDER */
+.order-item{background:#fff;border-radius:14px;padding:15px;margin-bottom:10px;border:1px solid var(--warm);border-left:4px solid var(--accent2);}
+.order-item.packed{border-left-color:var(--emp);}
+.order-item.transit{border-left-color:var(--blue);}
+.order-item.delivered{border-left-color:var(--success);}
+.order-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.order-name{font-weight:600;font-size:0.92rem;}
+.order-num{font-size:0.7rem;color:var(--muted);}
+.order-detail{font-size:0.8rem;color:var(--muted);margin-bottom:3px;}
+.order-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+
+/* FILTER */
+.filter-bar{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
+.filter-btn{background:#fff;border:1.5px solid var(--warm);border-radius:20px;padding:6px 13px;font-size:0.76rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.filter-btn.active{background:var(--dark);border-color:var(--dark);color:#fff;}
+
+/* CATALOG */
+.catalog-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--warm);}
+.catalog-name{font-weight:600;font-size:0.88rem;}
+.catalog-prices{font-size:0.76rem;margin-top:2px;}
+.catalog-cost{color:var(--muted);}
+.catalog-price{color:var(--accent);font-weight:600;}
+.catalog-margin{color:var(--success);font-weight:600;}
+
+/* BAR */
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-label{font-size:0.74rem;font-weight:600;color:var(--brown);width:62px;flex-shrink:0;}
+.bar-outer{flex:1;height:20px;background:var(--warm);border-radius:6px;overflow:hidden;}
+.bar-inner{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;transition:width .5s;}
+.bar-val{font-size:0.7rem;font-weight:700;color:#fff;}
+.bar-pct{font-size:0.7rem;color:var(--muted);width:34px;text-align:right;flex-shrink:0;}
+.rank-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--warm);}
+.rank-pos{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--accent2);width:22px;text-align:center;}
+.rank-name{font-weight:500;flex:1;font-size:0.86rem;}
+.rank-bar-wrap{width:55px;height:6px;background:var(--warm);border-radius:3px;overflow:hidden;}
+.rank-bar{height:100%;background:var(--accent);border-radius:3px;}
+
+/* CLIENT */
+.client-item{background:#fff;border-radius:12px;padding:13px 15px;margin-bottom:8px;border:1px solid var(--warm);display:flex;align-items:center;gap:12px;cursor:pointer;}
+.client-avatar{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0;}
+.client-name{font-weight:600;font-size:0.88rem;}
+.client-meta{font-size:0.74rem;color:var(--muted);margin-top:2px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:20px 20px 0 0;padding:22px 18px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--brown);margin-bottom:14px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;padding:11px 20px;border-radius:30px;font-size:0.83rem;font-weight:500;z-index:300;transition:transform .3s;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+.divider{height:1px;background:var(--warm);margin:14px 0;}
+.empty-msg{text-align:center;color:var(--muted);font-size:0.84rem;padding:28px 0;}
+.lock-screen{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.lock-icon{font-size:3rem;}
+.lock-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--brown);}
+.lock-sub{font-size:0.8rem;color:var(--muted);text-align:center;}
+.tabs-inner{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;}
+.tab-inner-btn{background:var(--warm);border:none;border-radius:10px;padding:8px 13px;font-family:'DM Sans',sans-serif;font-size:0.76rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.tab-inner-btn.active{background:var(--dark);color:#fff;}
+.success-banner{background:linear-gradient(135deg,var(--success),#2A5040);color:#fff;border-radius:16px;padding:22px;text-align:center;margin-bottom:14px;}
+.success-banner .icon{font-size:2.5rem;margin-bottom:8px;}
+.success-banner h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;margin-bottom:6px;}
+.success-banner p{font-size:0.8rem;opacity:.85;}
+.autofill-banner{background:#E8F4FD;border:1px solid #90CAF9;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.8rem;color:#1565C0;display:none;}
+.ganancia-tag{display:inline-block;background:#E8F5E9;color:#2E7D32;border-radius:6px;padding:2px 8px;font-size:0.72rem;font-weight:600;margin-left:6px;}
+.descuento-tag{display:inline-block;background:#FFF3E0;color:#E65100;border-radius:6px;padding:2px 8px;font-size:0.72rem;font-weight:600;}
+.config-section{margin-bottom:16px;}
+.config-title{font-size:0.8rem;font-weight:700;color:var(--brown);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">Jassmin<span>moda femenina</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goPage('pedido',this)">🛍 Envío</button>
+    <button class="nav-tab" onclick="goPage('admin',this)">⚙️ Admin</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════
+     PÁGINA: FORMULARIO
+════════════════════════════════ -->
+<div id="page-pedido" class="page active">
+  <div id="form-container">
+    <p class="section-title">Programa tu envío</p>
+    <p class="section-sub">Ya coordinaste tu compra por WhatsApp. Aquí solo registra tus datos para que te enviemos tu pedido. 🤍</p>
+
+    <!-- DATOS PERSONALES -->
+    <div class="card">
+      <div class="card-label">Tus datos</div>
+      <div id="autofill-banner" class="autofill-banner">✨ Encontramos tu compra anterior — datos pre-rellenados. Revisa que todo esté correcto.</div>
+      <div class="form-group" style="margin-top:8px">
+        <label class="form-label">Número de WhatsApp *</label>
+        <input class="form-input" id="inp-wsp" type="tel" placeholder="9XXXXXXXX" oninput="buscarClienteExistente()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nombre completo *</label>
+        <input class="form-input" id="inp-nombre" type="text" placeholder="Ej: Lucía Ramírez">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tu edad *</label>
+        <input class="form-input" id="inp-edad" type="number" min="10" max="99" placeholder="Ej: 24">
+      </div>
+    </div>
+
+    <!-- PRENDAS -->
+    <div class="card">
+      <div class="card-label">Prendas que compraste</div>
+      <div id="prendas-container" style="margin-top:8px"></div>
+      <button class="add-prenda-btn" id="btn-add-prenda" onclick="agregarPrendaForm()">＋ Agregar otra prenda</button>
+    </div>
+
+    <!-- PAGO -->
+    <div class="card">
+      <div class="card-label">Confirmación de pago</div>
+      <div class="monto-info" id="monto-info-box" style="margin-top:8px;display:none">
+        <div>Total referencial: <span class="monto-total" id="monto-referencial">S/ 0</span></div>
+        <div style="margin-top:4px;font-size:0.75rem">Si tienes un descuento o promo, coloca el monto que realmente pagaste abajo 👇</div>
+      </div>
+      <div class="form-group" style="margin-top:8px">
+        <label class="form-label">Monto que yapeaste / plinaste (S/) *</label>
+        <input class="form-input" id="inp-monto" type="number" min="1" placeholder="Ej: 79" oninput="actualizarDescuento()">
+      </div>
+      <div id="descuento-preview" style="display:none;margin-bottom:14px;font-size:0.8rem;color:var(--muted)"></div>
+      <div class="form-group">
+        <label class="form-label">Adjunta captura del pago *</label>
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('inp-captura').click()" ondragover="dragOver(event)" ondrop="dropFile(event)">
+          <input type="file" id="inp-captura" accept="image/*" onchange="previewCaptura(this)">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text">Toca para adjuntar captura de Yape/Plin</div>
+        </div>
+        <img id="captura-preview" class="upload-preview" alt="Captura">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Método de pago *</label>
+        <select class="form-select" id="inp-pago">
+          <option value="">-- Selecciona --</option>
+          <option>Yape</option><option>Plin</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ENVÍO -->
+    <div class="card">
+      <div class="card-label">Datos de envío</div>
+      <div class="form-group" style="margin-top:8px">
+        <label class="form-label">Método de envío *</label>
+        <select class="form-select" id="inp-envio" onchange="toggleEnvio()">
+          <option value="">-- Selecciona --</option>
+          <option value="motorizado">🏍️ Motorizado</option>
+          <option value="shalom">📦 Shalom</option>
+        </select>
+      </div>
+      <div id="envio-motorizado" style="display:none">
+        <div class="envio-box">
+          <div class="envio-title">🏍️ DATOS MOTORIZADO</div>
+          <div class="form-group">
+            <label class="form-label">Dirección completa *</label>
+            <textarea class="form-textarea" id="mot-direccion" placeholder="Calle, número, referencia..."></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Distrito *</label>
+            <input class="form-input" id="mot-distrito" type="text" placeholder="Ej: Miraflores, San Juan de Lurigancho...">
+          </div>
+        </div>
+      </div>
+      <div id="envio-shalom" style="display:none">
+        <div class="envio-box">
+          <div class="envio-title">📦 DATOS SHALOM</div>
+          <div class="form-group">
+            <label class="form-label">DNI *</label>
+            <input class="form-input" id="sha-dni" type="text" placeholder="8 dígitos" maxlength="8">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dirección de destino *</label>
+            <textarea class="form-textarea" id="sha-direccion" placeholder="Dirección donde recogerás..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Agencia Shalom *</label>
+            <input class="form-input" id="sha-agencia" type="text" placeholder="Ej: Agencia Shalom Gamarra">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Provincia *</label>
+            <input class="form-input" id="sha-provincia" type="text" placeholder="Ej: Huancayo, Cusco...">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Comentario adicional</label>
+      <textarea class="form-textarea" id="inp-comentario" placeholder="¿Algún detalle extra?"></textarea>
+    </div>
+
+    <button class="btn btn-primary" onclick="enviarPedido()">Registrar envío 🚀</button>
+    <div style="height:30px"></div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-container" style="display:none">
+    <div class="success-banner">
+      <div class="icon">🎉</div>
+      <h2>¡Envío registrado!</h2>
+      <p>Te contactaremos por WhatsApp para coordinar la entrega.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Resumen</div>
+      <div id="resumen-pedido" style="font-size:0.86rem;line-height:1.9;margin-top:8px"></div>
+    </div>
+    <button class="btn btn-secondary" onclick="nuevoPedido()">Registrar otro envío</button>
+    <div style="height:30px"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     PÁGINA: ADMIN
+════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div id="admin-lock" class="lock-screen">
+    <div class="lock-icon">🔐</div>
+    <div class="lock-title">Panel Jassmin</div>
+    <div class="lock-sub">Solo para el equipo Jassmin</div>
+    <div style="width:100%;max-width:300px">
+      <input class="form-input" id="inp-pass" type="password" placeholder="Contraseña" style="text-align:center;margin-bottom:12px">
+      <button class="btn btn-primary" onclick="checkPass()">Entrar</button>
+    </div>
+    <p style="font-size:0.7rem;color:var(--muted);margin-top:6px">Por defecto: <strong>tienda2024</strong></p>
+  </div>
+
+  <div id="admin-panel" style="display:none">
+    <p class="section-title">Panel Jassmin</p>
+    <div class="tabs-inner">
+      <button class="tab-inner-btn active" onclick="goAdmin('resumen',this)">📊 Resumen</button>
+      <button class="tab-inner-btn" onclick="goAdmin('pedidos',this)">📦 Pedidos</button>
+      <button class="tab-inner-btn" onclick="goAdmin('catalogo',this)">👗 Catálogo</button>
+      <button class="tab-inner-btn" onclick="goAdmin('clientes',this)">👥 Clientas</button>
+      <button class="tab-inner-btn" onclick="goAdmin('config',this)">⚙️ Config</button>
+    </div>
+
+    <!-- RESUMEN -->
+    <div id="admin-resumen" class="admin-sub">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Pedidos totales</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-pendientes">0</div><div class="stat-label">Por entregar</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-ventas" style="font-size:1.2rem">S/ 0</div><div class="stat-label">Ingresos reales</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-ganancia" style="font-size:1.2rem">S/ 0</div><div class="stat-label">Ganancia estimada</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num" id="stat-clientes">0</div><div class="stat-label">Clientas únicas</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-descuentos" style="font-size:1.2rem">S/ 0</div><div class="stat-label">Total descuentos</div></div>
+      </div>
+
+      <p class="card-label" style="margin-bottom:10px">🏆 Prendas más vendidas</p>
+      <div class="card" id="ranking-container"><div class="empty-msg">Sin datos aún</div></div>
+
+      <p class="card-label" style="margin-bottom:10px;margin-top:4px">👧 Edad de clientas</p>
+      <div class="card" id="edad-container"><div class="empty-msg">Sin datos aún</div></div>
+
+      <p class="card-label" style="margin-bottom:10px;margin-top:4px">🚚 Tipo de envío</p>
+      <div class="card" id="envio-stats"><div class="empty-msg">Sin datos aún</div></div>
+
+      <button class="btn btn-excel" onclick="exportarExcel()" style="margin-top:4px">📥 Exportar a Excel</button>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div id="admin-pedidos" class="admin-sub" style="display:none">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterPedidos('todos',this)">Todos</button>
+        <button class="filter-btn" onclick="filterPedidos('pendiente',this)">🟡 Pendiente</button>
+        <button class="filter-btn" onclick="filterPedidos('empaquetado',this)">📦 Empaquetado</button>
+        <button class="filter-btn" onclick="filterPedidos('transito',this)">🔵 En camino</button>
+        <button class="filter-btn" onclick="filterPedidos('entregado',this)">✅ Entregado</button>
+      </div>
+      <div id="pedidos-list"></div>
+    </div>
+
+    <!-- CATÁLOGO -->
+    <div id="admin-catalogo" class="admin-sub" style="display:none">
+      <div class="card">
+        <p class="card-label">Agregar prenda</p>
+        <div class="form-group" style="margin-top:8px">
+          <input class="form-input" id="cat-nombre" type="text" placeholder="Nombre de la prenda">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Costo (S/)</label>
+            <input class="form-input" id="cat-costo" type="number" placeholder="Lo que te costó">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Precio venta (S/)</label>
+            <input class="form-input" id="cat-precio" type="number" placeholder="Lo que cobras">
+          </div>
+        </div>
+        <div id="margen-preview" style="font-size:0.8rem;color:var(--success);margin-bottom:12px;display:none"></div>
+        <button class="btn btn-primary" onclick="agregarPrenda()">+ Agregar al catálogo</button>
+      </div>
+      <div id="catalogo-list"></div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="admin-clientes" class="admin-sub" style="display:none">
+      <div id="clientes-list"></div>
+    </div>
+
+    <!-- CONFIG -->
+    <div id="admin-config" class="admin-sub" style="display:none">
+      <div class="card">
+        <div class="config-title">🔑 Cambiar contraseña</div>
+        <div class="form-group">
+          <input class="form-input" id="nueva-pass" type="password" placeholder="Nueva contraseña">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="cambiarPass()">Guardar contraseña</button>
+      </div>
+      <div class="card" style="margin-top:4px">
+        <div class="config-title">☁️ Google Sheets (sincronización)</div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;line-height:1.6">Pega aquí el URL de tu Google Apps Script para sincronizar pedidos en la nube.</p>
+        <div class="form-group">
+          <input class="form-input" id="sheets-url" type="url" placeholder="https://script.google.com/...">
+        </div>
+        <button class="btn btn-blue btn-sm" onclick="guardarSheetsUrl()">Guardar URL</button>
+        <div id="sheets-status" style="font-size:0.76rem;margin-top:8px;color:var(--muted)"></div>
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+    <button class="btn btn-secondary" style="margin-bottom:30px" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- MODAL: Pedido detalle -->
+<div class="modal-overlay" id="modal-pedido">
+  <div class="modal">
+    <div class="modal-title">📦 Detalle del pedido</div>
+    <div id="modal-body"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-pedido')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Cliente -->
+<div class="modal-overlay" id="modal-cliente">
+  <div class="modal">
+    <div class="modal-title">👤 Historial clienta</div>
+    <div id="modal-cliente-body"></div>
+    <button class="btn btn-secondary" style="margin-top:16px" onclick="closeModal('modal-cliente')">Cerrar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  STORAGE
+// ══════════════════════════════════════════
+const KP='jassmin_pedidos', KC='jassmin_catalogo', KS='jassmin_sheets';
+const getPedidos   = () => JSON.parse(localStorage.getItem(KP)||'[]');
+const getCatalogo  = () => JSON.parse(localStorage.getItem(KC)||'[]');
+const savePedidos  = d  => localStorage.setItem(KP, JSON.stringify(d));
+const saveCatalogo = d  => localStorage.setItem(KC, JSON.stringify(d));
+const getPass      = () => localStorage.getItem('jassmin_pass')||'tienda2024';
+const getSheetsUrl = () => localStorage.getItem(KS)||'';
+const uid          = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+if (!getCatalogo().length) saveCatalogo([
+  {id:uid(),nombre:'Blusa floral',costo:25,precio:55},
+  {id:uid(),nombre:'Jean skinny',costo:45,precio:89},
+  {id:uid(),nombre:'Vestido midi',costo:60,precio:120},
+  {id:uid(),nombre:'Top clásico',costo:15,precio:35},
+  {id:uid(),nombre:'Pantalón sastre',costo:30,precio:59},
+]);
+
+// ══ NAV ══
+function goPage(p,btn){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  btn.classList.add('active');
+  if(p==='admin'&&document.getElementById('admin-panel').style.display!=='none') renderResumen();
+}
+function goAdmin(sub,btn){
+  document.querySelectorAll('.admin-sub').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.tab-inner-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('admin-'+sub).style.display='block';
+  btn.classList.add('active');
+  if(sub==='resumen') renderResumen();
+  if(sub==='pedidos') renderPedidos('todos');
+  if(sub==='catalogo') renderCatalogo();
+  if(sub==='clientes') renderClientes();
+  if(sub==='config') renderConfig();
+}
+
+// ══ MULTI-PRENDA FORM ══
+let numPrendas = 0;
+function agregarPrendaForm(data){
+  if(numPrendas>=10){ toast('⚠️ Máximo 10 prendas por pedido'); return; }
+  numPrendas++;
+  const idx = numPrendas;
+  const cat = getCatalogo();
+  const opts = cat.map(p=>`<option value="${p.nombre}" data-precio="${p.precio}">${p.nombre} — S/ ${p.precio}</option>`).join('');
+  const div = document.createElement('div');
+  div.className='prenda-item'; div.id='prenda-'+idx;
+  div.innerHTML=`
+    <div class="prenda-num">PRENDA ${idx}</div>
+    ${idx>1?`<button class="prenda-remove" onclick="removePrenda(${idx})">✕</button>`:''}
+    <div class="form-group">
+      <label class="form-label">Prenda *</label>
+      <select class="form-select prenda-sel" data-idx="${idx}" onchange="updateMonto()">
+        <option value="">-- Selecciona --</option>${opts}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Talla *</label>
+        <select class="form-select prenda-talla">
+          <option value="">Talla</option>
+          <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option><option>Único</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cantidad *</label>
+        <input class="form-input prenda-cant" type="number" min="1" max="20" value="1" oninput="updateMonto()">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+      <label class="form-label">Nota (color, diseño...)</label>
+      <input class="form-input prenda-nota" type="text" placeholder="Opcional">
+    </div>`;
+  // Pre-fill if data provided
+  if(data){
+    div.querySelector('.prenda-sel').value = data.nombre||'';
+    div.querySelector('.prenda-talla').value = data.talla||'';
+    div.querySelector('.prenda-cant').value  = data.cantidad||1;
+    div.querySelector('.prenda-nota').value  = data.nota||'';
+  }
+  document.getElementById('prendas-container').appendChild(div);
+  if(numPrendas>=10) document.getElementById('btn-add-prenda').style.display='none';
+  updateMonto();
+}
+
+function removePrenda(idx){
+  const el = document.getElementById('prenda-'+idx);
+  if(el){ el.remove(); numPrendas--; }
+  document.getElementById('btn-add-prenda').style.display='block';
+  // Renumber
+  let n=0;
+  document.querySelectorAll('.prenda-item').forEach(el=>{ n++; el.querySelector('.prenda-num').textContent='PRENDA '+n; });
+  numPrendas=n;
+  updateMonto();
+}
+
+function getPrendasForm(){
+  const items=[];
+  document.querySelectorAll('.prenda-item').forEach(el=>{
+    const nombre = el.querySelector('.prenda-sel').value;
+    const talla  = el.querySelector('.prenda-talla').value;
+    const cant   = parseInt(el.querySelector('.prenda-cant').value)||1;
+    const nota   = el.querySelector('.prenda-nota').value.trim();
+    if(nombre) items.push({nombre,talla,cantidad:cant,nota});
+  });
+  return items;
+}
+
+function updateMonto(){
+  const cat = getCatalogo();
+  let total=0;
+  document.querySelectorAll('.prenda-item').forEach(el=>{
+    const nombre = el.querySelector('.prenda-sel').value;
+    const cant   = parseInt(el.querySelector('.prenda-cant').value)||1;
+    const p = cat.find(c=>c.nombre===nombre);
+    if(p) total += p.precio*cant;
+  });
+  const box = document.getElementById('monto-info-box');
+  const ref = document.getElementById('monto-referencial');
+  if(total>0){ box.style.display='block'; ref.textContent='S/ '+total.toFixed(0); }
+  else box.style.display='none';
+  actualizarDescuento();
+}
+
+function actualizarDescuento(){
+  const cat = getCatalogo();
+  let total=0;
+  document.querySelectorAll('.prenda-item').forEach(el=>{
+    const nombre=el.querySelector('.prenda-sel').value;
+    const cant=parseInt(el.querySelector('.prenda-cant').value)||1;
+    const p=cat.find(c=>c.nombre===nombre);
+    if(p) total+=p.precio*cant;
+  });
+  const monto=parseFloat(document.getElementById('inp-monto').value)||0;
+  const prev=document.getElementById('descuento-preview');
+  if(monto>0&&total>0){
+    prev.style.display='block';
+    if(monto<total){
+      const desc=total-monto;
+      prev.innerHTML=`<span class="descuento-tag">Descuento aplicado: S/ ${desc.toFixed(0)}</span> (${((desc/total)*100).toFixed(0)}% de descuento)`;
+    } else {
+      prev.innerHTML=`<span style="color:var(--success);font-weight:600">✓ Monto sin descuento</span>`;
+    }
+  } else prev.style.display='none';
+}
+
+// ══ AUTOFILL ══
+function buscarClienteExistente(){
+  const wsp = document.getElementById('inp-wsp').value.trim();
+  if(wsp.length<9) return;
+  const pedidos = getPedidos();
+  const previos = pedidos.filter(p=>p.wsp===wsp);
+  if(!previos.length) return;
+  const ultimo = previos[0];
+  document.getElementById('inp-nombre').value = ultimo.nombre||'';
+  document.getElementById('inp-edad').value   = ultimo.edad||'';
+  if(ultimo.envio?.tipo==='motorizado'){
+    document.getElementById('inp-envio').value='motorizado'; toggleEnvio();
+    document.getElementById('mot-direccion').value=ultimo.envio.direccion||'';
+    document.getElementById('mot-distrito').value=ultimo.envio.distrito||'';
+  } else if(ultimo.envio?.tipo==='shalom'){
+    document.getElementById('inp-envio').value='shalom'; toggleEnvio();
+    document.getElementById('sha-dni').value=ultimo.envio.dni||'';
+    document.getElementById('sha-direccion').value=ultimo.envio.direccion||'';
+    document.getElementById('sha-agencia').value=ultimo.envio.agencia||'';
+    document.getElementById('sha-provincia').value=ultimo.envio.provincia||'';
+  }
+  document.getElementById('autofill-banner').style.display='block';
+  toast('✨ Datos pre-rellenados de tu compra anterior');
+}
+
+// ══ CAPTURA ══
+function previewCaptura(input){
+  if(!input.files||!input.files[0]) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=document.getElementById('captura-preview');
+    img.src=e.target.result; img.style.display='block';
+    document.querySelector('.upload-text').textContent='✅ Captura adjuntada';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function dragOver(e){ e.preventDefault(); document.getElementById('upload-area').classList.add('dragover'); }
+function dropFile(e){
+  e.preventDefault(); document.getElementById('upload-area').classList.remove('dragover');
+  const file=e.dataTransfer.files[0];
+  if(file){ document.getElementById('inp-captura').files=e.dataTransfer.files; previewCaptura({files:[file]}); }
+}
+
+// ══ ENVÍO TOGGLE ══
+function toggleEnvio(){
+  const v=document.getElementById('inp-envio').value;
+  document.getElementById('envio-motorizado').style.display=v==='motorizado'?'block':'none';
+  document.getElementById('envio-shalom').style.display=v==='shalom'?'block':'none';
+}
+
+// ══ ENVIAR PEDIDO ══
+function enviarPedido(){
+  const nombre    = document.getElementById('inp-nombre').value.trim();
+  const wsp       = document.getElementById('inp-wsp').value.trim();
+  const edad      = parseInt(document.getElementById('inp-edad').value)||0;
+  const monto     = parseFloat(document.getElementById('inp-monto').value)||0;
+  const pago      = document.getElementById('inp-pago').value;
+  const tipoEnvio = document.getElementById('inp-envio').value;
+  const comentario= document.getElementById('inp-comentario').value.trim();
+  const prendas   = getPrendasForm();
+
+  if(!nombre||!wsp||!edad){ toast('⚠️ Completa tus datos personales'); return; }
+  if(edad<10||edad>99){ toast('⚠️ Ingresa una edad válida'); return; }
+  if(!prendas.length){ toast('⚠️ Agrega al menos una prenda'); return; }
+  if(prendas.some(p=>!p.talla)){ toast('⚠️ Selecciona talla en todas las prendas'); return; }
+  if(!monto){ toast('⚠️ Ingresa el monto que pagaste'); return; }
+  if(!pago){ toast('⚠️ Selecciona método de pago'); return; }
+  if(!tipoEnvio){ toast('⚠️ Selecciona método de envío'); return; }
+
+  // Captura
+  const capturaInput=document.getElementById('inp-captura');
+  let capturaBase64='';
+  if(capturaInput.files&&capturaInput.files[0]){
+    // Store as data URL (already in preview)
+    capturaBase64=document.getElementById('captura-preview').src||'';
+  } else { toast('⚠️ Adjunta la captura del pago'); return; }
+
+  // Envío data
+  let envioData={};
+  if(tipoEnvio==='motorizado'){
+    const dir=document.getElementById('mot-direccion').value.trim();
+    const dist=document.getElementById('mot-distrito').value.trim();
+    if(!dir||!dist){ toast('⚠️ Completa dirección y distrito'); return; }
+    envioData={tipo:'motorizado',direccion:dir,distrito:dist};
+  } else {
+    const dni=document.getElementById('sha-dni').value.trim();
+    const dir=document.getElementById('sha-direccion').value.trim();
+    const ag=document.getElementById('sha-agencia').value.trim();
+    const prov=document.getElementById('sha-provincia').value.trim();
+    if(!dni||!dir||!ag||!prov){ toast('⚠️ Completa todos los datos de Shalom'); return; }
+    if(dni.length!==8){ toast('⚠️ DNI debe tener 8 dígitos'); return; }
+    envioData={tipo:'shalom',dni,direccion:dir,agencia:ag,provincia:prov};
+  }
+
+  // Calcular total referencial y distribución proporcional
+  const cat=getCatalogo();
+  let totalRef=0;
+  prendas.forEach(p=>{ const c=cat.find(x=>x.nombre===p.nombre); if(c) totalRef+=c.precio*(p.cantidad||1); });
+  const descuento=Math.max(0,totalRef-monto);
+
+  // Distribuir monto proporcionalmente
+  const prendasConPrecio=prendas.map(p=>{
+    const c=cat.find(x=>x.nombre===p.nombre);
+    const precioRef=(c?c.precio:0)*(p.cantidad||1);
+    const precioReal=totalRef>0?(monto*(precioRef/totalRef)):precioRef;
+    const costo=(c?c.costo:0)*(p.cantidad||1);
+    return {...p,precioRef,precioReal:parseFloat(precioReal.toFixed(2)),costo};
+  });
+
+  const pedido={
+    id:uid(), fecha:new Date().toISOString(),
+    nombre,wsp,edad,prendas:prendasConPrecio,
+    totalRef,montoReal:monto,descuento,
+    captura:capturaBase64,
+    envio:envioData,pago,comentario,
+    estado:'pendiente',pagoValidado:false
+  };
+
+  const all=getPedidos(); all.unshift(pedido); savePedidos(all);
+
+  // Sync to Sheets
+  sincronizarSheets(pedido);
+
+  // Resumen
+  const prendasStr=prendasConPrecio.map(p=>`• ${p.nombre} (${p.talla}) x${p.cantidad}${p.nota?' — '+p.nota:''}`).join('<br>');
+  const envStr=tipoEnvio==='motorizado'
+    ?`🏍️ Motorizado · ${envioData.direccion}, ${envioData.distrito}`
+    :`📦 Shalom · ${envioData.provincia} — ${envioData.agencia}`;
+  document.getElementById('resumen-pedido').innerHTML=`
+    <b>Prendas:</b><br>${prendasStr}<br>
+    <b>Monto pagado:</b> S/ ${monto}${descuento>0?` <span class="descuento-tag">Desc. S/ ${descuento.toFixed(0)}</span>`:''}<br>
+    <b>Cliente:</b> ${nombre} · ${edad} años<br>
+    <b>Envío:</b> ${envStr}<br>
+    <b>Pago:</b> ${pago}`;
+  document.getElementById('form-container').style.display='none';
+  document.getElementById('success-container').style.display='block';
+}
+
+function nuevoPedido(){
+  document.getElementById('prendas-container').innerHTML='';
+  numPrendas=0;
+  document.getElementById('btn-add-prenda').style.display='block';
+  ['inp-nombre','inp-wsp','inp-edad','inp-monto','inp-comentario',
+   'mot-direccion','mot-distrito','sha-dni','sha-direccion','sha-agencia','sha-provincia'
+  ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['inp-pago','inp-envio'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('captura-preview').style.display='none';
+  document.querySelector('.upload-text').textContent='Toca para adjuntar captura de Yape/Plin';
+  document.getElementById('autofill-banner').style.display='none';
+  document.getElementById('monto-info-box').style.display='none';
+  document.getElementById('descuento-preview').style.display='none';
+  toggleEnvio();
+  document.getElementById('form-container').style.display='block';
+  document.getElementById('success-container').style.display='none';
+  agregarPrendaForm();
+}
+
+// ══ AUTH ══
+function checkPass(){
+  if(document.getElementById('inp-pass').value===getPass()){
+    document.getElementById('admin-lock').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    renderResumen();
+  } else toast('❌ Contraseña incorrecta');
+}
+document.getElementById('inp-pass').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
+function cerrarSesion(){
+  document.getElementById('admin-lock').style.display='flex';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('inp-pass').value='';
+}
+function cambiarPass(){
+  const v=document.getElementById('nueva-pass').value.trim();
+  if(!v||v.length<4){toast('⚠️ Mínimo 4 caracteres');return;}
+  localStorage.setItem('jassmin_pass',v);
+  document.getElementById('nueva-pass').value='';
+  toast('✅ Contraseña actualizada');
+}
+
+// ══ RESUMEN ══
+function renderResumen(){
+  const pedidos=getPedidos();
+  const entregados=pedidos.filter(p=>p.estado==='entregado');
+  const ingresos=entregados.reduce((s,p)=>s+(p.montoReal||0),0);
+  const ganancia=entregados.reduce((s,p)=>{
+    const costo=(p.prendas||[]).reduce((a,x)=>a+(x.costo||0),0);
+    return s+(p.montoReal||0)-costo;
+  },0);
+  const descuentos=pedidos.reduce((s,p)=>s+(p.descuento||0),0);
+
+  document.getElementById('stat-total').textContent=pedidos.length;
+  document.getElementById('stat-pendientes').textContent=pedidos.filter(p=>p.estado!=='entregado').length;
+  document.getElementById('stat-clientes').textContent=new Set(pedidos.map(p=>p.wsp)).size;
+  document.getElementById('stat-ventas').textContent='S/ '+ingresos.toFixed(0);
+  document.getElementById('stat-ganancia').textContent='S/ '+ganancia.toFixed(0);
+  document.getElementById('stat-descuentos').textContent='S/ '+descuentos.toFixed(0);
+
+  // Ranking
+  const counts={};
+  pedidos.forEach(p=>(p.prendas||[]).forEach(x=>{counts[x.nombre]=(counts[x.nombre]||0)+(x.cantidad||1);}));
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxV=sorted[0]?.[1]||1;
+  document.getElementById('ranking-container').innerHTML=sorted.length
+    ?sorted.map(([n,c],i)=>`<div class="rank-item"><div class="rank-pos">${i+1}</div><div class="rank-name">${n}</div><div><div class="rank-bar-wrap"><div class="rank-bar" style="width:${(c/maxV*100).toFixed(0)}%"></div></div><div style="font-size:0.7rem;color:var(--muted);text-align:right">${c} unid.</div></div></div>`).join('')
+    :'<div class="empty-msg">Sin pedidos aún</div>';
+
+  // Edades
+  const rangos=[['10-17',10,17],['18-24',18,24],['25-34',25,34],['35-44',35,44],['45+',45,99]];
+  const cnts=rangos.map(([l,a,b])=>[l,pedidos.filter(p=>p.edad>=a&&p.edad<=b).length]);
+  const totalE=cnts.reduce((s,[,c])=>s+c,0)||1;
+  const maxE=Math.max(...cnts.map(([,c])=>c))||1;
+  document.getElementById('edad-container').innerHTML=totalE>0
+    ?cnts.map(([l,c])=>`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-outer"><div class="bar-inner" style="width:${c?Math.max(c/maxE*100,8):0}%;background:linear-gradient(90deg,var(--pink),var(--accent2))">${c?`<span class="bar-val">${c}</span>`:''}</div></div><div class="bar-pct">${c?Math.round(c/totalE*100)+'%':''}</div></div>`).join('')
+    :'<div class="empty-msg">Sin datos de edad aún</div>';
+
+  // Envíos
+  const motos=pedidos.filter(p=>p.envio?.tipo==='motorizado').length;
+  const shaloms=pedidos.filter(p=>p.envio?.tipo==='shalom').length;
+  const totalEnv=motos+shaloms||1;
+  document.getElementById('envio-stats').innerHTML=(motos||shaloms)?`
+    <div class="bar-row"><div class="bar-label">🏍️ Moto</div><div class="bar-outer"><div class="bar-inner" style="width:${motos?Math.max(motos/totalEnv*100,8):0}%;background:linear-gradient(90deg,#7C3AED,#A78BFA)">${motos?`<span class="bar-val">${motos}</span>`:''}</div></div><div class="bar-pct">${Math.round(motos/totalEnv*100)}%</div></div>
+    <div class="bar-row"><div class="bar-label">📦 Shalom</div><div class="bar-outer"><div class="bar-inner" style="width:${shaloms?Math.max(shaloms/totalEnv*100,8):0}%;background:linear-gradient(90deg,#1A4A8A,#3A6B8A)">${shaloms?`<span class="bar-val">${shaloms}</span>`:''}</div></div><div class="bar-pct">${Math.round(shaloms/totalEnv*100)}%</div></div>`
+    :'<div class="empty-msg">Sin datos aún</div>';
+}
+
+// ══ PEDIDOS ══
+let pedidoFilter='todos';
+function filterPedidos(f,btn){
+  pedidoFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPedidos(f);
+}
+function renderPedidos(filter){
+  const pedidos=getPedidos().filter(p=>filter==='todos'||p.estado===filter);
+  const el=document.getElementById('pedidos-list');
+  if(!pedidos.length){el.innerHTML='<div class="empty-msg">No hay pedidos aquí</div>';return;}
+  const clsMap={pendiente:'',empaquetado:'packed',transito:'transit',entregado:'delivered'};
+  const badgeMap={
+    pendiente:'<span class="badge badge-pending">🟡 Pendiente</span>',
+    empaquetado:'<span class="badge badge-packed">📦 Empaquetado</span>',
+    transito:'<span class="badge badge-transit">🔵 En camino</span>',
+    entregado:'<span class="badge badge-delivered">✅ Entregado</span>'
+  };
+  el.innerHTML=pedidos.map(p=>{
+    const fecha=new Date(p.fecha).toLocaleDateString('es-PE',{day:'2-digit',month:'short'});
+    const envTag=p.envio?.tipo==='motorizado'
+      ?`<span class="badge badge-moto">🏍️ ${p.envio.distrito}</span>`
+      :p.envio?.tipo==='shalom'
+      ?`<span class="badge badge-shalom">📦 ${p.envio.provincia}</span>`:'';
+    const pagoTag=p.pagoValidado
+      ?'<span class="badge badge-validated">💚 Pago validado</span>'
+      :'<span class="badge badge-pending-pay">⏳ Pago pendiente</span>';
+    const prendasResumen=(p.prendas||[]).map(x=>`${x.nombre} (${x.talla}) x${x.cantidad}`).join(', ');
+    const descTag=p.descuento>0?`<span class="descuento-tag">Desc. S/ ${p.descuento.toFixed(0)}</span>`:'';
+    return `<div class="order-item ${clsMap[p.estado]||''}">
+      <div class="order-top">
+        <div><div class="order-name">${p.nombre}${p.edad?' · '+p.edad+' años':''}</div><div class="order-num">#${p.id.slice(-5).toUpperCase()} · ${fecha}</div></div>
+        ${badgeMap[p.estado]||''}
+      </div>
+      <div class="order-detail">👗 ${prendasResumen}</div>
+      <div class="order-detail">💰 S/ ${(p.montoReal||0).toFixed(0)} ${descTag}</div>
+      <div class="order-detail">${envTag} ${pagoTag}</div>
+      <div class="order-actions">
+        <button class="btn btn-blue btn-sm" onclick="openPedido('${p.id}')">Ver detalle</button>
+        ${!p.pagoValidado?`<button class="btn btn-success btn-sm" onclick="validarPago('${p.id}')">✓ Validar pago</button>`:''}
+        ${p.estado==='pendiente'?`<button class="btn btn-emp btn-sm" onclick="cambiarEstado('${p.id}','empaquetado')">Empaquetar</button>`:''}
+        ${p.estado==='empaquetado'?`<button class="btn btn-gold btn-sm" onclick="cambiarEstado('${p.id}','transito')">En camino</button>`:''}
+        ${p.estado==='transito'?`<button class="btn btn-success btn-sm" onclick="cambiarEstado('${p.id}','entregado')">Entregado ✓</button>`:''}
+        ${p.estado!=='entregado'?`<button class="btn btn-danger btn-sm" onclick="eliminarPedido('${p.id}')">🗑</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function validarPago(id){
+  const all=getPedidos(), p=all.find(x=>x.id===id);
+  if(p){p.pagoValidado=true; savePedidos(all);}
+  renderPedidos(pedidoFilter); toast('💚 Pago validado');
+}
+function cambiarEstado(id,estado){
+  const all=getPedidos(), p=all.find(x=>x.id===id);
+  if(p){p.estado=estado; savePedidos(all);}
+  renderPedidos(pedidoFilter); renderResumen(); toast('✅ Estado actualizado');
+}
+function eliminarPedido(id){
+  if(!confirm('¿Eliminar este pedido?')) return;
+  savePedidos(getPedidos().filter(p=>p.id!==id));
+  renderPedidos(pedidoFilter); renderResumen(); toast('🗑 Pedido eliminado');
+}
+function openPedido(id){
+  const p=getPedidos().find(x=>x.id===id); if(!p) return;
+  const prendasHTML=(p.prendas||[]).map(x=>`
+    <div style="padding:8px 0;border-bottom:1px solid var(--warm);font-size:0.82rem">
+      <b>${x.nombre}</b> · ${x.talla} · x${x.cantidad}
+      ${x.nota?'<br><span style="color:var(--muted)">'+x.nota+'</span>':''}
+      <br><span style="color:var(--muted)">Precio real: S/ ${x.precioReal?.toFixed(2)||'—'} | Costo: S/ ${x.costo?.toFixed(0)||'—'}</span>
+    </div>`).join('');
+  let envHTML='';
+  if(p.envio?.tipo==='motorizado') envHTML=`🏍️ Motorizado<br><b>Dir:</b> ${p.envio.direccion}<br><b>Distrito:</b> ${p.envio.distrito}`;
+  else if(p.envio?.tipo==='shalom') envHTML=`📦 Shalom<br><b>DNI:</b> ${p.envio.dni}<br><b>Dir:</b> ${p.envio.direccion}<br><b>Agencia:</b> ${p.envio.agencia}<br><b>Provincia:</b> ${p.envio.provincia}`;
+  const captHTML=p.captura?`<div style="margin:12px 0"><div class="card-label" style="margin-bottom:8px">Captura de pago</div><img src="${p.captura}" style="width:100%;border-radius:10px;border:1px solid var(--warm)" onclick="this.style.transform=this.style.transform?'':'scale(1.5)';this.style.transition='transform .3s'"></div>`:'';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="font-size:0.86rem;line-height:1.9">
+      <b>Cliente:</b> ${p.nombre}${p.edad?' · '+p.edad+' años':''}<br>
+      <b>WhatsApp:</b> <a href="https://wa.me/51${p.wsp}" style="color:var(--accent)">📲 ${p.wsp}</a><br>
+      <b>Estado:</b> ${p.estado} ${p.pagoValidado?'· 💚 Pago validado':'· ⏳ Pago pendiente'}<br>
+      <b>Monto pagado:</b> S/ ${(p.montoReal||0).toFixed(0)} ${p.descuento>0?`<span class="descuento-tag">Desc. S/ ${p.descuento.toFixed(0)}</span>`:''}<br>
+      <b>Pago:</b> ${p.pago}
+    </div>
+    <div class="divider"></div>
+    <div class="card-label" style="margin-bottom:8px">Prendas</div>
+    ${prendasHTML}
+    ${captHTML}
+    <div class="divider"></div>
+    <div style="font-size:0.86rem;line-height:1.9"><b>Envío:</b> ${envHTML}</div>
+    ${p.comentario?`<div style="font-size:0.82rem;margin-top:8px;color:var(--muted)"><b>Comentario:</b> ${p.comentario}</div>`:''}
+    <div style="font-size:0.76rem;color:var(--muted);margin-top:8px">${new Date(p.fecha).toLocaleString('es-PE')}</div>`;
+  document.getElementById('modal-pedido').classList.add('open');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ══ CATÁLOGO ══
+document.getElementById('cat-costo').addEventListener('input', previewMargen);
+document.getElementById('cat-precio').addEventListener('input', previewMargen);
+function previewMargen(){
+  const costo=parseFloat(document.getElementById('cat-costo').value)||0;
+  const precio=parseFloat(document.getElementById('cat-precio').value)||0;
+  const prev=document.getElementById('margen-preview');
+  if(costo&&precio){
+    const margen=precio-costo;
+    const pct=((margen/precio)*100).toFixed(0);
+    prev.style.display='block';
+    prev.textContent=`Ganancia por unidad: S/ ${margen.toFixed(0)} (${pct}% margen)`;
+  } else prev.style.display='none';
+}
+function renderCatalogo(){
+  const cat=getCatalogo();
+  document.getElementById('catalogo-list').innerHTML=cat.length
+    ?cat.map(p=>{
+      const margen=p.precio-p.costo;
+      const pct=p.precio?((margen/p.precio)*100).toFixed(0):0;
+      return `<div class="catalog-item">
+        <div>
+          <div class="catalog-name">${p.nombre}</div>
+          <div class="catalog-prices">
+            <span class="catalog-cost">Costo: S/ ${p.costo||0}</span> &nbsp;
+            <span class="catalog-price">Venta: S/ ${p.precio||0}</span> &nbsp;
+            <span class="catalog-margin">+S/ ${margen} (${pct}%)</span>
+          </div>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="eliminarPrenda('${p.id}')">🗑</button>
+      </div>`;}).join('')
+    :'<div class="empty-msg">Catálogo vacío</div>';
+}
+function agregarPrenda(){
+  const nombre=document.getElementById('cat-nombre').value.trim();
+  const costo=parseFloat(document.getElementById('cat-costo').value)||0;
+  const precio=parseFloat(document.getElementById('cat-precio').value)||0;
+  if(!nombre){toast('⚠️ Escribe el nombre de la prenda');return;}
+  const cat=getCatalogo(); cat.push({id:uid(),nombre,costo,precio}); saveCatalogo(cat);
+  document.getElementById('cat-nombre').value='';
+  document.getElementById('cat-costo').value='';
+  document.getElementById('cat-precio').value='';
+  document.getElementById('margen-preview').style.display='none';
+  renderCatalogo(); loadCatalogSelects(); toast('✅ Prenda agregada');
+}
+function eliminarPrenda(id){
+  if(!confirm('¿Eliminar esta prenda?')) return;
+  saveCatalogo(getCatalogo().filter(p=>p.id!==id));
+  renderCatalogo(); loadCatalogSelects(); toast('🗑 Prenda eliminada');
+}
+function loadCatalogSelects(){
+  const cat=getCatalogo();
+  const opts='<option value="">-- Selecciona --</option>'+cat.map(p=>`<option value="${p.nombre}" data-precio="${p.precio}">${p.nombre} — S/ ${p.precio}</option>`).join('');
+  document.querySelectorAll('.prenda-sel').forEach(sel=>{ const v=sel.value; sel.innerHTML=opts; sel.value=v; });
+}
+
+// ══ CLIENTES ══
+function renderClientes(){
+  const pedidos=getPedidos(), mapa={};
+  pedidos.forEach(p=>{ if(!mapa[p.wsp]) mapa[p.wsp]={nombre:p.nombre,wsp:p.wsp,edad:p.edad,pedidos:[]}; mapa[p.wsp].pedidos.push(p); });
+  const clientes=Object.values(mapa).sort((a,b)=>b.pedidos.length-a.pedidos.length);
+  document.getElementById('clientes-list').innerHTML=clientes.length
+    ?clientes.map(c=>`<div class="client-item" onclick="openCliente('${c.wsp}')">
+        <div class="client-avatar">${c.nombre[0].toUpperCase()}</div>
+        <div><div class="client-name">${c.nombre}</div>
+        <div class="client-meta">${c.pedidos.length} pedido${c.pedidos.length!==1?'s':''}${c.edad?' · '+c.edad+' años':''} · 📲 ${c.wsp}</div></div>
+      </div>`).join('')
+    :'<div class="empty-msg">Sin clientas aún</div>';
+}
+function openCliente(wsp){
+  const pedidos=getPedidos().filter(p=>p.wsp===wsp); if(!pedidos.length) return;
+  const c=pedidos[0];
+  const totalReal=pedidos.filter(p=>p.estado==='entregado').reduce((s,p)=>s+(p.montoReal||0),0);
+  const totalDesc=pedidos.reduce((s,p)=>s+(p.descuento||0),0);
+  document.getElementById('modal-cliente-body').innerHTML=`
+    <div style="font-size:0.86rem;line-height:1.8;margin-bottom:12px">
+      <b>Nombre:</b> ${c.nombre}<br>
+      ${c.edad?'<b>Edad:</b> '+c.edad+' años<br>':''}
+      <b>WhatsApp:</b> <a href="https://wa.me/51${wsp}" style="color:var(--accent)">📲 ${wsp}</a><br>
+      <b>Pedidos:</b> ${pedidos.length}<br>
+      <b>Total pagado:</b> S/ ${totalReal.toFixed(0)}<br>
+      <b>Total descuentos:</b> S/ ${totalDesc.toFixed(0)}
+    </div>
+    <div class="divider"></div>
+    <p class="card-label" style="margin-bottom:8px">Historial</p>
+    ${pedidos.map(p=>{
+      const fecha=new Date(p.fecha).toLocaleDateString('es-PE',{day:'2-digit',month:'short'});
+      const prs=(p.prendas||[]).map(x=>x.nombre).join(', ');
+      const env=p.envio?.tipo==='motorizado'?'🏍️ '+p.envio.distrito:p.envio?.tipo==='shalom'?'📦 '+p.envio.provincia:'';
+      return `<div style="font-size:0.8rem;padding:8px 0;border-bottom:1px solid var(--warm)">
+        <b>${prs}</b><br>
+        <span style="color:var(--muted)">${fecha} · ${p.estado} · S/ ${(p.montoReal||0).toFixed(0)}${env?' · '+env:''}</span>
+      </div>`;
+    }).join('')}`;
+  document.getElementById('modal-cliente').classList.add('open');
+}
+
+// ══ CONFIG ══
+function renderConfig(){
+  const url=getSheetsUrl();
+  if(url) document.getElementById('sheets-url').value=url;
+  document.getElementById('sheets-status').textContent=url?'✅ URL configurada':'Sin configurar';
+}
+function guardarSheetsUrl(){
+  const url=document.getElementById('sheets-url').value.trim();
+  localStorage.setItem(KS,url);
+  document.getElementById('sheets-status').textContent=url?'✅ URL guardada':'Sin configurar';
+  toast('✅ URL de Google Sheets guardada');
+}
+
+// ══ GOOGLE SHEETS SYNC ══
+async function sincronizarSheets(pedido){
+  const url=getSheetsUrl();
+  if(!url) return;
+  try{
+    const row={
+      id:pedido.id, fecha:pedido.fecha,
+      nombre:pedido.nombre, wsp:pedido.wsp, edad:pedido.edad,
+      prendas:(pedido.prendas||[]).map(p=>`${p.nombre}(${p.talla})x${p.cantidad}`).join(' | '),
+      totalRef:pedido.totalRef, montoReal:pedido.montoReal, descuento:pedido.descuento,
+      tipoEnvio:pedido.envio?.tipo,
+      direccion:pedido.envio?.tipo==='motorizado'?pedido.envio.direccion:pedido.envio?.direccion,
+      distrito:pedido.envio?.distrito||'',
+      provincia:pedido.envio?.provincia||'',
+      agencia:pedido.envio?.agencia||'',
+      dni:pedido.envio?.dni||'',
+      pago:pedido.pago, estado:pedido.estado
+    };
+    await fetch(url,{method:'POST',body:JSON.stringify(row)});
+  } catch(e){ console.log('Sheets sync error',e); }
+}
+
+// ══ EXCEL EXPORT ══
+function exportarExcel(){
+  const pedidos=getPedidos();
+  if(!pedidos.length){toast('⚠️ No hay pedidos para exportar');return;}
+  const headers=['ID','Fecha','Nombre','WhatsApp','Edad','Prendas','Total Ref.','Monto Pagado','Descuento','Tipo Envío','Dirección','Distrito','Provincia','Agencia','DNI','Pago','Estado','Pago Validado'];
+  const rows=pedidos.map(p=>[
+    p.id.slice(-5).toUpperCase(),
+    new Date(p.fecha).toLocaleDateString('es-PE'),
+    p.nombre, p.wsp, p.edad,
+    (p.prendas||[]).map(x=>`${x.nombre}(${x.talla})x${x.cantidad}`).join(' | '),
+    p.totalRef||0, p.montoReal||0, p.descuento||0,
+    p.envio?.tipo||'',
+    p.envio?.tipo==='motorizado'?p.envio.direccion:p.envio?.direccion||'',
+    p.envio?.distrito||'',
+    p.envio?.provincia||'',
+    p.envio?.agencia||'',
+    p.envio?.dni||'',
+    p.pago||'', p.estado||'',
+    p.pagoValidado?'Sí':'No'
+  ]);
+  let csv=headers.join(',')+'\n'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`jassmin_pedidos_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('📥 Exportando a Excel...');
+}
+
+// ══ TOAST ══
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ══ INIT ══
+agregarPrendaForm();
+</script>
+</body>
+</html>
