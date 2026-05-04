@@ -852,20 +852,25 @@ async function syncPedido(pedido){
 async function buscarCliente(){
   const wsp=document.getElementById('inp-wsp').value.trim();
   if(wsp.length<9) return;
-  // Cargar desde Sheets si cache vacío
-  if(!pedidosCache.length){
-    try{
-      const res=await fetch(SHEETS_URL);
-      const data=await res.json();
-      if(data.ok) pedidosCache=data.pedidos||[];
-    }catch(e){}
-  }
-  // Buscar último pedido entregado
-  const previos=pedidosCache.filter(p=>p.wsp===wsp&&p.estado==='entregado');
-  if(previos.length){
-    const u=previos[0];
+
+  // SIEMPRE cargar desde Sheets para tener data actualizada
+  toast('🔍 Buscando tus datos...');
+  try{
+    const res=await fetch(SHEETS_URL);
+    const data=await res.json();
+    if(data.ok) pedidosCache=data.pedidos||[];
+  }catch(e){}
+
+  // Buscar cualquier pedido previo (entregado o espera) ordenado por fecha más reciente
+  const todos=pedidosCache.filter(p=>p.wsp===wsp);
+  // Primero buscar entregados para datos de envío, si no cualquiera
+  const entregados=todos.filter(p=>p.estado==='entregado');
+  const u=entregados.length?entregados[0]:todos[0];
+
+  if(u){
     document.getElementById('inp-nombre').value=u.nombre||'';
     document.getElementById('inp-edad').value=u.edad||'';
+    // Pre-rellenar envío del último pedido entregado
     if(u.envio?.tipo==='motorizado'){
       document.getElementById('inp-envio').value='motorizado';toggleEnvio();
       document.getElementById('mot-dir').value=u.envio.direccion||'';
@@ -880,7 +885,8 @@ async function buscarCliente(){
     document.getElementById('autofill-card').style.display='block';
     toast('✨ Datos pre-rellenados de tu compra anterior');
   }
-  // Mostrar acumuladas si estamos en modo enviar
+
+  // Mostrar prendas acumuladas si estamos en modo enviar
   if(modoActual==='enviar') mostrarAcumuladas();
 }
 
@@ -1052,6 +1058,53 @@ async function enviarPedido(){
   });
   saveCat(cat);
 
+  const btn=document.getElementById('btn-enviar');
+  btn.textContent='Enviando...';btn.disabled=true;
+
+  if(modoActual==='acumular'){
+    // Buscar si ya tiene un pedido en espera para agregar prendas
+    const pedidoEspera=pedidosCache.find(p=>p.wsp===wsp&&p.estado==='espera');
+
+    if(pedidoEspera){
+      // AGREGAR al pedido existente en vez de crear uno nuevo
+      const prendasActualizadas=[...(pedidoEspera.prendas||[]),...prendas];
+      const montoActualizado=(parseFloat(pedidoEspera.montoReal)||0)+monto;
+      const totalRefActualizado=(parseFloat(pedidoEspera.totalRef)||0)+totalRef;
+      pedidoEspera.prendas=prendasActualizadas;
+      pedidoEspera.montoReal=montoActualizado;
+      pedidoEspera.totalRef=totalRefActualizado;
+      pedidoEspera.descuento=Math.max(0,totalRefActualizado-montoActualizado);
+
+      await sheetsPost({
+        action:'updateEstado',
+        id:pedidoEspera.id,
+        estado:'espera',
+        pagoValidado:false,
+        montoReal:montoActualizado,
+        prendas:prendasActualizadas
+      });
+
+      btn.textContent='Confirmar 🚀';btn.disabled=false;
+
+      // Notificar a tienda
+      const pStr=prendasActualizadas.map(x=>`${x.nombre}(${x.talla||'?'})x${x.cantidad}`).join(', ');
+      const msgTienda=encodeURIComponent(`🛍️ PRENDA ACUMULADA - JASSMIN\n\n👤 ${nombre} · ${wsp}\n👗 Prendas totales: ${pStr}\n💰 Total acumulado: S/ ${montoActualizado}\n\nVer admin: ${APP_URL}`);
+      window.open('https://wa.me/'+WSP_TIENDA+'?text='+msgTienda,'_blank');
+
+      document.getElementById('success-msg').textContent=`Prenda agregada a tu pedido acumulado. Ya tienes ${prendasActualizadas.length} prenda${prendasActualizadas.length!==1?'s':''} esperando envío.`;
+      document.getElementById('tracking-box').style.display='none';
+      document.getElementById('resumen-pedido').innerHTML=`
+        <b>Prendas acumuladas:</b><br>${prendasActualizadas.map(x=>`• ${x.nombre} (${x.talla||'?'}) x${x.cantidad}`).join('<br>')}<br>
+        <b>Total acumulado:</b> S/ ${montoActualizado.toFixed(0)}<br>
+        <b>Estado:</b> 🛍️ Acumulando — cuando quieras enviar todo, elige "Programar envío"`;
+      document.getElementById('form-container').style.display='none';
+      document.getElementById('success-container').style.display='block';
+      window.scrollTo(0,0);
+      return;
+    }
+    // Si no tiene pedido en espera, crear uno nuevo normalmente
+  }
+
   const estado=modoActual==='acumular'?'espera':'pendiente';
   const pedidoId=uid();
   const pedido={
@@ -1063,8 +1116,6 @@ async function enviarPedido(){
     acumuladasIds:acumuladasIds.length?acumuladasIds:undefined
   };
 
-  const btn=document.getElementById('btn-enviar');
-  btn.textContent='Enviando...';btn.disabled=true;
   await syncPedido(pedido);
 
   // Cerrar pedidos acumulados en Sheets
