@@ -849,44 +849,59 @@ async function syncPedido(pedido){
 }
 
 // ══ AUTOFILL ══
-async function buscarCliente(){
+let buscarTimer=null;
+function buscarCliente(){
+  clearTimeout(buscarTimer);
+  buscarTimer=setTimeout(()=>_buscarCliente(),700);
+}
+
+async function _buscarCliente(){
   const wsp=document.getElementById('inp-wsp').value.trim();
   if(wsp.length<9) return;
 
-  // SIEMPRE cargar desde Sheets para tener data actualizada
   toast('🔍 Buscando tus datos...');
+
+  // SIEMPRE consultar Sheets fresco
   try{
     const res=await fetch(SHEETS_URL);
     const data=await res.json();
     if(data.ok) pedidosCache=data.pedidos||[];
-  }catch(e){}
+  }catch(e){ console.log('Error sheets',e); }
 
-  // Buscar cualquier pedido previo (entregado o espera) ordenado por fecha más reciente
   const todos=pedidosCache.filter(p=>p.wsp===wsp);
-  // Primero buscar entregados para datos de envío, si no cualquiera
-  const entregados=todos.filter(p=>p.estado==='entregado');
-  const u=entregados.length?entregados[0]:todos[0];
+  if(!todos.length){ return; }
 
-  if(u){
-    document.getElementById('inp-nombre').value=u.nombre||'';
-    document.getElementById('inp-edad').value=u.edad||'';
-    // Pre-rellenar envío del último pedido entregado
-    if(u.envio?.tipo==='motorizado'){
-      document.getElementById('inp-envio').value='motorizado';toggleEnvio();
-      document.getElementById('mot-dir').value=u.envio.direccion||'';
-      document.getElementById('mot-dist').value=u.envio.distrito||'';
-    }else if(u.envio?.tipo==='shalom'){
-      document.getElementById('inp-envio').value='shalom';toggleEnvio();
-      document.getElementById('sha-dni').value=u.envio.dni||'';
-      document.getElementById('sha-dir').value=u.envio.direccion||'';
-      document.getElementById('sha-ag').value=u.envio.agencia||'';
-      document.getElementById('sha-prov').value=u.envio.provincia||'';
+  // Datos personales del primer pedido encontrado
+  const u=todos[0];
+  document.getElementById('inp-nombre').value=u.nombre||'';
+  document.getElementById('inp-edad').value=u.edad||'';
+
+  // Datos de envío del pedido más reciente que tenga envío
+  const conEnvio=todos.filter(p=>p.envio&&p.envio.tipo);
+  if(conEnvio.length){
+    const ue=conEnvio[0];
+    if(ue.envio.tipo==='motorizado'){
+      document.getElementById('inp-envio').value='motorizado';
+      toggleEnvio();
+      setTimeout(()=>{
+        document.getElementById('mot-dir').value=ue.envio.direccion||'';
+        document.getElementById('mot-dist').value=ue.envio.distrito||'';
+      },150);
+    }else if(ue.envio.tipo==='shalom'){
+      document.getElementById('inp-envio').value='shalom';
+      toggleEnvio();
+      setTimeout(()=>{
+        document.getElementById('sha-dni').value=ue.envio.dni||'';
+        document.getElementById('sha-dir').value=ue.envio.direccion||'';
+        document.getElementById('sha-ag').value=ue.envio.agencia||'';
+        document.getElementById('sha-prov').value=ue.envio.provincia||'';
+      },150);
     }
-    document.getElementById('autofill-card').style.display='block';
-    toast('✨ Datos pre-rellenados de tu compra anterior');
   }
 
-  // Mostrar prendas acumuladas si estamos en modo enviar
+  document.getElementById('autofill-card').style.display='block';
+  toast('✨ Datos cargados correctamente');
+
   if(modoActual==='enviar') mostrarAcumuladas();
 }
 
@@ -1062,6 +1077,13 @@ async function enviarPedido(){
   btn.textContent='Enviando...';btn.disabled=true;
 
   if(modoActual==='acumular'){
+    // Consultar Sheets fresco para asegurarnos de encontrar pedido en espera
+    try{
+      const res=await fetch(SHEETS_URL);
+      const data=await res.json();
+      if(data.ok) pedidosCache=data.pedidos||[];
+    }catch(e){}
+
     // Buscar si ya tiene un pedido en espera para agregar prendas
     const pedidoEspera=pedidosCache.find(p=>p.wsp===wsp&&p.estado==='espera');
 
